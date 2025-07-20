@@ -662,7 +662,7 @@ const Navdata = () => {
                 {
                     id: "signUp",
                     label: "Sign Up",
-                    link: "/#",
+                    link: "/register",
                     isChildItem: true,
                     click: function (e : any) {
                         e.preventDefault();

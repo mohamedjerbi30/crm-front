@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+/*import React, { useState, useEffect } from "react";
 import { isEmpty } from "lodash";
 
 import {
@@ -187,4 +187,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default UserProfile;*/

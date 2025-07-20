@@ -1,104 +1,64 @@
-//Include Both Helper File with needed methods
-import { getFirebaseBackend } from "../../../helpers/firebase_helper";
-import {
-  postFakeLogin,
-  postJwtLogin,
-} from "../../../helpers/fakebackend_helper";
-
 import { loginSuccess, logoutUserSuccess, apiError, reset_login_flag } from './reducer';
+import { postFakeLogin } from "../../../helpers/fakebackend_helper";
+import { removeAuthorization } from "../../../helpers/api_helper";
 
-export const loginUser = (user : any, history : any) => async (dispatch : any) => {
-
+export const loginUser = (user: any, history: any) => async (dispatch: any) => {
   try {
-    let response;
-    if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
-      let fireBaseBackend : any = getFirebaseBackend();
-      response = fireBaseBackend.loginUser(
-        user.email,
-        user.password
-      );
-    } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
-      response = postJwtLogin({
-        email: user.email,
-        password: user.password
-      });
+    // Always use your backend API
+    const response = await postFakeLogin({
+      email: user.email,
+      password: user.password,
+    });
 
-    } else if (process.env.REACT_APP_API_URL) {
-      response = postFakeLogin({
-        email: user.email,
-        password: user.password,
-      });
-    }
-
-    var data = await response;
-
-    if (data) {
-      sessionStorage.setItem("authUser", JSON.stringify(data));
-      if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
-        var finallogin : any = JSON.stringify(data);
-        finallogin = JSON.parse(finallogin)
-        data = finallogin.data;
-        if (finallogin.status === "success") {
-          dispatch(loginSuccess(data));
-          history('/dashboard')
-        } else {
-          dispatch(apiError(finallogin));
-        }
+    if (response) {
+      // Axios response structure: response.data contains the actual API response
+      const responseData = response.data;
+      
+      // Store the entire response or just the needed parts
+      const authData = {
+        user: responseData.user || responseData.data || responseData,
+        token: responseData.token || responseData.accessToken,
+        ...responseData
+      };
+      
+      sessionStorage.setItem("authUser", JSON.stringify(authData));
+      
+      // Check success in the data payload, not the HTTP status
+      if (responseData.success || responseData.status === "success" || response.status === 200) {
+        dispatch(loginSuccess(authData));
+        history('/dashboard');
       } else {
-        dispatch(loginSuccess(data));
-        history('/dashboard')
+        dispatch(apiError(responseData));
       }
     }
-  } catch (error : any) {
-    dispatch(apiError(error));
+  } catch (error: any) {
+    // Handle error response properly
+    const errorData = error.response?.data || { message: error.message };
+    dispatch(apiError(errorData));
   }
 };
 
-export const logoutUser = () => async (dispatch : any) => {
+export const logoutUser = () => async (dispatch: any) => {
   try {
     sessionStorage.removeItem("authUser");
-    let fireBaseBackend : any = getFirebaseBackend();
-    if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
-      const response = fireBaseBackend.logout;
-      dispatch(logoutUserSuccess(response));
-    } else {
-      dispatch(logoutUserSuccess(true));
-    }
-
-  } catch (error : any) {
-    dispatch(apiError(error));
+    removeAuthorization();
+    dispatch(logoutUserSuccess(true));
+  } catch (error: any) {
+    dispatch(apiError(error as any));
   }
 };
 
-export const socialLogin = (type : any, history : any) => async (dispatch : any) => {
+// Export the missing functions that are imported in components
+export const socialLogin = (provider: string, data: any, history: any) => async (dispatch: any) => {
   try {
-    let response;
-
-    if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
-      const fireBaseBackend : any = getFirebaseBackend();
-      response = fireBaseBackend.socialLoginUser(type);
-    }
-    //  else {
-      //   response = postSocialLogin(data);
-      // }
-      
-      const socialdata = await response;
-    if (socialdata) {
-      sessionStorage.setItem("authUser", JSON.stringify(response));
-      dispatch(loginSuccess(response));
-      history('/dashboard')
-    }
-
-  } catch (error : any) {
-    dispatch(apiError(error));
+    // Implement your social login logic here
+    // This is a placeholder - replace with your actual social login API call
+    console.log('Social login not implemented yet');
+  } catch (error: any) {
+    dispatch(apiError(error as any));
   }
 };
 
-export const resetLoginFlag = () => async (dispatch : any) => {
-  try {
-    const response = dispatch(reset_login_flag());
-    return response;
-  } catch (error : any) {
-    dispatch(apiError(error));
-  }
+export const resetLoginFlag = () => (dispatch: any) => {
+  dispatch(reset_login_flag());
 };

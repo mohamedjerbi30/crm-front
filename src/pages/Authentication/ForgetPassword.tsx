@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+/*import PropTypes from "prop-types";
 import React from "react";
 import { Row, Col, Alert, Card, CardBody, Container, FormFeedback, Input, Label, Form } from "reactstrap";
 
@@ -13,7 +13,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 
 // action
-import { userForgetPassword } from "../../slices/thunks";
+//import { userForgetPassword } from "../../slices/thunks";
 
 // import images
 // import profile from "../../assets/images/bg.png";
@@ -24,7 +24,7 @@ import { createSelector } from "reselect";
 const ForgetPasswordPage = (props: any) => {
   const dispatch: any = useDispatch();
 
-  const validation: any = useFormik({
+  /*const validation: any = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
 
@@ -150,4 +150,4 @@ ForgetPasswordPage.propTypes = {
   history: PropTypes.object,
 };
 
-export default withRouter(ForgetPasswordPage);
+export default withRouter(ForgetPasswordPage);*/

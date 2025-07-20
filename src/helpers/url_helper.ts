@@ -1,3 +1,4 @@
+export const GET_DEMO_DATA = "http://localhost:5000/api/users";
 //REGISTER
 export const POST_FAKE_REGISTER = "/auth/signup";
 

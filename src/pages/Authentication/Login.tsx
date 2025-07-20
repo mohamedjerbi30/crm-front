@@ -67,17 +67,10 @@ const Login = (props : any) => {
         }
     });
 
-    const signIn = (type : any) => {
-        dispatch(socialLogin(type, props.router.navigate));
-    };
-
     //handleTwitterLoginResponse
     // const twitterResponse = e => {}
 
     //for facebook and google authentication
-    const socialResponse = (type : any) => {
-        signIn(type);
-    };
 
 
     useEffect(() => {
@@ -194,7 +187,7 @@ const Login = (props : any) => {
                                                             className="btn btn-primary btn-icon me-1"
                                                             onClick={e => {
                                                                 e.preventDefault();
-                                                                socialResponse("facebook");
+                            
                                                             }}
                                                             >
                                                             <i className="ri-facebook-fill fs-16" />
@@ -204,7 +197,7 @@ const Login = (props : any) => {
                                                             className="btn btn-danger btn-icon me-1"
                                                             onClick={e => {
                                                                 e.preventDefault();
-                                                                socialResponse("google");
+                            
                                                             }}
                                                             >
                                                             <i className="ri-google-fill fs-16" />

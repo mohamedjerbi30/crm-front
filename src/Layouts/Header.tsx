@@ -14,7 +14,7 @@ import WebAppsDropdown from '../Components/Common/WebAppsDropdown';
 import MyCartDropdown from '../Components/Common/MyCartDropdown';
 import FullScreenDropdown from '../Components/Common/FullScreenDropdown';
 import NotificationDropdown from '../Components/Common/NotificationDropdown';
-import ProfileDropdown from '../Components/Common/ProfileDropdown';
+//import ProfileDropdown from '../Components/Common/ProfileDropdown';
 import LightDark from '../Components/Common/LightDark';
 
 import { changeSidebarVisibility } from '../slices/thunks';
@@ -154,8 +154,8 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass } : any) => {
                             {/* NotificationDropdown */}
                             <NotificationDropdown />
 
-                            {/* ProfileDropdown */}
-                            <ProfileDropdown />
+                            {/* ProfileDropdown /*<ProfileDropdown /> */}
+                            
                         </div>
                     </div>
                 </div>
