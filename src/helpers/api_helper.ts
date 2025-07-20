@@ -35,28 +35,69 @@ axios.interceptors.request.use(
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // ENHANCED LOGGING FOR DEBUGGING
+    console.log('=== API REQUEST DEBUG ===');
+    console.log('URL:', `${axios.defaults.baseURL}${config.url}`);
+    console.log('Method:', config.method?.toUpperCase());
+    console.log('Headers:', config.headers);
+    console.log('Request Data:', config.data);
+    console.log('========================');
+    
     return config;
   },
   (error) => {
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
 
-// Response interceptor for error handling
+// Response interceptor with enhanced error handling
 axios.interceptors.response.use(
   (response) => {
-    return response.data ? response.data : response;
+    // ENHANCED LOGGING FOR SUCCESSFUL RESPONSES
+    console.log('=== API RESPONSE DEBUG ===');
+    console.log('Status:', response.status);
+    console.log('Data:', response.data);
+    console.log('Headers:', response.headers);
+    console.log('==========================');
+    return response;
   },
   (error) => {
-    let message;
+    // ENHANCED ERROR LOGGING
+    console.error('=== API ERROR DEBUG ===');
+    console.error('Error:', error);
     
     if (error.response) {
+      console.error('Response Status:', error.response.status);
+      console.error('Response Data:', error.response.data);
+      console.error('Response Headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('Request made but no response:', error.request);
+    } else {
+      console.error('Error setting up request:', error.message);
+    }
+    console.error('Config:', error.config);
+    console.error('========================');
+
+    let message;
+    let errorData = null;
+
+    if (error.response) {
+      errorData = error.response.data;
+      
       switch (error.response.status) {
+        case 400:
+          message = error.response.data?.message || "Bad Request - Please check your input";
+          break;
         case 401:
           message = "Unauthorized - Invalid credentials";
           // Optional: Clear session and redirect to login
           sessionStorage.removeItem("authUser");
-          window.location.href = "/login";
+          // Only redirect if we're not already on the login page
+          if (window.location.pathname !== "/login") {
+            window.location.href = "/login";
+          }
           break;
         case 403:
           message = "Forbidden - Access denied";
@@ -75,8 +116,16 @@ axios.interceptors.response.use(
     } else {
       message = error.message || "An error occurred";
     }
-    
-    return Promise.reject(message);
+
+    // Create a more detailed error object
+    const enhancedError = {
+      message,
+      status: error.response?.status,
+      data: errorData,
+      originalError: error
+    };
+
+    return Promise.reject(enhancedError);
   }
 );
 
@@ -93,7 +142,7 @@ const removeAuthorization = () => {
 class APIClient {
   get = (url: string, params?: any) => {
     let response;
-    
+
     if (params) {
       const paramKeys: string[] = [];
       Object.keys(params).forEach(key => {
@@ -105,11 +154,18 @@ class APIClient {
     } else {
       response = axios.get(url);
     }
-    
+
     return response;
   };
 
   create = (url: string, data: any) => {
+    // ENHANCED LOGGING FOR CREATE METHOD
+    console.log('=== APIClient.create DEBUG ===');
+    console.log('URL:', url);
+    console.log('Data being sent:', data);
+    console.log('Full URL:', `${axios.defaults.baseURL}${url}`);
+    console.log('==============================');
+    
     return axios.post(url, data);
   };
 
@@ -139,9 +195,9 @@ const getLoggedinUser = () => {
   }
 };
 
-export { 
-  APIClient, 
-  setAuthorization, 
-  removeAuthorization, 
-  getLoggedinUser 
+export {
+  APIClient,
+  setAuthorization,
+  removeAuthorization,
+  getLoggedinUser
 };
